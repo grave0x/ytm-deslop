@@ -1,0 +1,3 @@
+# YTM-DeSlop builds on Python 3 standard library only.
+# No external pip packages are required.
+python-version >= 3.9

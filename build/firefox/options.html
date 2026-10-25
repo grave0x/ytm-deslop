@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YTM-DeSlop Settings</title>
+  <link rel="stylesheet" href="content.css">
+</head>
+<body>
+  <div class="ytm-ds-options-container">
+    <header style="margin-bottom: 24px;">
+      <h1 style="margin: 0; font-size: 24px;">YTM-DeSlop Settings</h1>
+      <p style="margin: 8px 0 0; color: #5f6368;">AI Music Slop Blocker for YouTube Music & YouTube</p>
+    </header>
+
+    <div class="ytm-ds-tab-group" role="tablist">
+      <button class="ytm-ds-tab ytm-ds-tab--active" role="tab" data-tab="general">General</button>
+      <button class="ytm-ds-tab" role="tab" data-tab="blocklist">Blocklist</button>
+      <button class="ytm-ds-tab" role="tab" data-tab="manual">Manual Blocks</button>
+      <button class="ytm-ds-tab" role="tab" data-tab="data">Data</button>
+    </div>
+
+    <!-- General Tab -->
+    <div class="ytm-ds-tab-panel ytm-ds-tab-panel--active" role="tabpanel" data-tab="general">
+      <div class="ytm-ds-section">
+        <h2>Blocking Behavior</h2>
+        <label class="ytm-ds-label">
+          <input type="checkbox" id="prefBlockHigh" checked>
+          <span class="ytm-ds-label-text"><strong>Block high-confidence AI content</strong> — Automatically hide known AI music channels/artists</span>
+        </label>
+        <label class="ytm-ds-label">
+          <input type="checkbox" id="prefWarnMedium" checked>
+          <span class="ytm-ds-label-text"><strong>Show warnings for medium-confidence</strong> — Display dismissible warnings for probable AI content</span>
+        </label>
+        <label class="ytm-ds-label">
+          <input type="checkbox" id="prefAutoBlock">
+          <span class="ytm-ds-label-text"><strong>Auto-block new AI channels</strong> — Automatically add newly detected AI channels to local blocklist</span>
+        </label>
+        <label class="ytm-ds-label">
+          <input type="checkbox" id="prefShowIndicator" checked>
+          <span class="ytm-ds-label-text"><strong>Show block indicators</strong> — Display red/orange dots next to blocked content</span>
+        </label>
+      </div>
+
+      <div class="ytm-ds-section">
+        <h2>Stats</h2>
+        <div class="ytm-ds-stats">
+          <div class="ytm-ds-stat-card">
+            <p class="ytm-ds-stat-value" id="statTotalBlocklist">-</p>
+            <p class="ytm-ds-stat-label">Total Blocklist Entries</p>
+          </div>
+          <div class="ytm-ds-stat-card">
+            <p class="ytm-ds-stat-value" id="statHighConf">-</p>
+            <p class="ytm-ds-stat-label">High Confidence</p>
+          </div>
+          <div class="ytm-ds-stat-card">
+            <p class="ytm-ds-stat-value" id="statMedConf">-</p>
+            <p class="ytm-ds-stat-label">Medium Confidence</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blocklist Tab -->
+    <div class="ytm-ds-tab-panel" role="tabpanel" data-tab="blocklist">
+      <div class="ytm-ds-section">
+        <h2>Blocklist Sources</h2>
+        <div class="ytm-ds-list" id="sourceList">
+          <div class="ytm-ds-empty-state">Loading sources...</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <button class="ytm-ds-button" id="btnRefreshSources">Refresh Blocklist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Blocks Tab -->
+    <div class="ytm-ds-tab-panel" role="tabpanel" data-tab="manual">
+      <div class="ytm-ds-section">
+        <h2>Blocked Channels</h2>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" class="ytm-ds-input" id="addChannelInput" placeholder="Add channel handle (@name) or UC-ID...">
+          <button class="ytm-ds-button" id="btnAddChannel">Add</button>
+        </div>
+        <div class="ytm-ds-list" id="blockedChannelsList">
+          <div class="ytm-ds-empty-state">No manually blocked channels</div>
+        </div>
+      </div>
+
+      <div class="ytm-ds-section">
+        <h2>Blocked Artists</h2>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" class="ytm-ds-input" id="addArtistInput" placeholder="Add artist name...">
+          <button class="ytm-ds-button" id="btnAddArtist">Add</button>
+        </div>
+        <div class="ytm-ds-list" id="blockedArtistsList">
+          <div class="ytm-ds-empty-state">No manually blocked artists</div>
+        </div>
+      </div>
+
+      <div class="ytm-ds-section">
+        <h2>Blocked Keywords</h2>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" class="ytm-ds-input" id="addKeywordInput" placeholder="Add keyword (e.g., 'AI generated', 'Sped Up')...">
+          <button class="ytm-ds-button" id="btnAddKeyword">Add</button>
+        </div>
+        <div class="ytm-ds-list" id="blockedKeywordsList">
+          <div class="ytm-ds-empty-state">No blocked keywords</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Tab -->
+    <div class="ytm-ds-tab-panel" role="tabpanel" data-tab="data">
+      <div class="ytm-ds-section">
+        <h2>Export / Import</h2>
+        <p style="margin-bottom: 16px; color: #5f6368;">Backup or restore your manual blocklists and preferences.</p>
+        <button class="ytm-ds-button" id="btnExport">Export All Data (JSON)</button>
+        <div style="margin-top: 12px;">
+          <input type="file" id="importFile" accept=".json" style="display: none;">
+          <button class="ytm-ds-button ytm-ds-button--secondary" id="btnImport">Import Data (JSON)</button>
+        </div>
+      </div>
+
+      <div class="ytm-ds-section">
+        <h2>Danger Zone</h2>
+        <p style="margin-bottom: 16px; color: #5f6368;">These actions cannot be undone.</p>
+        <button class="ytm-ds-button ytm-ds-button--danger" id="btnClearAll">Clear All Manual Blocks</button>
+        <button class="ytm-ds-button ytm-ds-button--danger" style="margin-left: 8px;" id="btnResetAll">Reset All Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

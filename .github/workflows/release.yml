@@ -1,0 +1,120 @@
+name: Build & Release
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "**.md"
+      - "**.txt"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - "**.md"
+      - "**.txt"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+
+env:
+  PYTHON_VERSION: "3.11"
+  PIP_CACHE_DIR: "~/.cache/pip"
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install build
+
+      - name: Create build directory structure
+        run: |
+          mkdir -p build/firefox
+          mkdir -p build/chrome
+          mkdir -p output
+
+      - name: Copy shared resources
+        run: |
+          # Copy userscript into extension roots so it can be used if needed
+          cp -r src/ src_backup/
+
+      - name: Build extensions
+        run: |
+          python3 build/build.py
+
+      - name: Generate checksums
+        run: |
+          echo "Generating checksums..."
+          cd output
+          sha256sum * > checksums.txt
+          ls -la
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: releases
+          path: |
+            output/
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            output/ytm-deslop-firefox-v1.zip
+            output/ytm-deslop-chrome-v1.zip
+            output/ytm-deslop-userscript-v1.zip
+            output/checksums.txt
+          tag_name: v1.0.0
+          name: Release v1.0.0
+          draft: false
+          prerelease: false
+
+  test-build:
+    name: Test Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create build directory structure
+        run: |
+          mkdir -p build/firefox
+          mkdir -p build/chrome
+
+      - name: Test build script
+        run: |
+          python3 build/build.py
