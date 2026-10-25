@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T04:19:00.848836+00:00",
+  "generated_at": "2026-10-25T08:10:27.562343+00:00",
   "total": 36205,
   "sources": [
     "stevoisiak",
@@ -28016,13 +28016,6 @@
       "value": "@BluegrassGospelTunes",
       "confidence": "high",
       "raw": "@BluegrassGospelTunes"
-    },
-    {
-      "source": "aislist_blocklist",
-      "kind": "channel",
-      "value": "@BlueprintAmericaOfficial",
-      "confidence": "high",
-      "raw": "@BlueprintAmericaOfficial"
     },
     {
       "source": "aislist_blocklist",
@@ -56828,13 +56821,6 @@
       "value": "@Flickart-ai",
       "confidence": "high",
       "raw": "@Flickart-ai"
-    },
-    {
-      "source": "aislist_blocklist",
-      "kind": "channel",
-      "value": "@Flicora",
-      "confidence": "high",
-      "raw": "@Flicora"
     },
     {
       "source": "aislist_blocklist",
@@ -158934,13 +158920,6 @@
     {
       "source": "aislist_blocklist",
       "kind": "channel",
-      "value": "@WION",
-      "confidence": "high",
-      "raw": "@WION"
-    },
-    {
-      "source": "aislist_blocklist",
-      "kind": "channel",
       "value": "@WISDOM-cn9cu",
       "confidence": "high",
       "raw": "@WISDOM-cn9cu"
@@ -186549,13 +186528,6 @@
     {
       "source": "aislist_blocklist",
       "kind": "channel",
-      "value": "@crystalcutasmr-2",
-      "confidence": "high",
-      "raw": "@crystalcutasmr-2"
-    },
-    {
-      "source": "aislist_blocklist",
-      "kind": "channel",
       "value": "@crystalcutasmr-e6d",
       "confidence": "high",
       "raw": "@crystalcutasmr-e6d"
@@ -192138,6 +192110,13 @@
       "value": "@elwoodbethep",
       "confidence": "high",
       "raw": "@elwoodbethep"
+    },
+    {
+      "source": "aislist_blocklist",
+      "kind": "channel",
+      "value": "@elzoratv",
+      "confidence": "high",
+      "raw": "@elzoratv"
     },
     {
       "source": "aislist_blocklist",
@@ -222494,6 +222473,13 @@
     {
       "source": "aislist_blocklist",
       "kind": "channel",
+      "value": "@raccoonreport1",
+      "confidence": "high",
+      "raw": "@raccoonreport1"
+    },
+    {
+      "source": "aislist_blocklist",
+      "kind": "channel",
       "value": "@rachitrajsingh2469",
       "confidence": "high",
       "raw": "@rachitrajsingh2469"
@@ -226557,6 +226543,13 @@
       "value": "@sdkmedia-f9b",
       "confidence": "high",
       "raw": "@sdkmedia-f9b"
+    },
+    {
+      "source": "aislist_blocklist",
+      "kind": "channel",
+      "value": "@sdqawwaliurdu-r7s",
+      "confidence": "high",
+      "raw": "@sdqawwaliurdu-r7s"
     },
     {
       "source": "aislist_blocklist",
@@ -241467,6 +241460,13 @@
       "value": "@weirdailab",
       "confidence": "high",
       "raw": "@weirdailab"
+    },
+    {
+      "source": "aislist_blocklist",
+      "kind": "channel",
+      "value": "@weirdengineeringmysteries",
+      "confidence": "high",
+      "raw": "@weirdengineeringmysteries"
     },
     {
       "source": "aislist_blocklist",

@@ -274,8 +274,8 @@ function initialize() {
  */
 function checkAndBlockTitles(blocklist) {
     const titleElements = document.querySelectorAll(
-        '.ytd-video-title-renderer,'
-        '.video-title,'
+        '.ytd-video-title-renderer, ' +
+        '.video-title, ' +
         '.watch-title'
     );
 
@@ -295,7 +295,7 @@ function checkAndBlockTitles(blocklist) {
  */
 function checkAndBlockChannels(blocklist) {
     const channelElements = document.querySelectorAll(
-        '.ytd-channel-name,'
+        '.ytd-channel-name, ' +
         '.yt-simple-endpoint.style-scope.ytd-channel-name'
     );
 
@@ -319,7 +319,7 @@ function checkAndBlockChannels(blocklist) {
  */
 function checkAndBlockArtists(blocklist) {
     const artistElements = document.querySelectorAll(
-        '.ytd-player-bar .ytd-long-form-description-span,'
+        '.ytd-player-bar .ytd-long-form-description-span, ' +
         '.ytd-video-owner .ytd-channel-name'
     );
 
