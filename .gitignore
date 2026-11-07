@@ -1,0 +1,5 @@
+# Generated into the extension roots by build/build.py from src/data/blocklist.json.
+build/firefox/blocklist.json
+build/chrome/blocklist.json
+__pycache__/
+*.pyc

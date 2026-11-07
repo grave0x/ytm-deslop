@@ -92,12 +92,20 @@ AI-generated music flooding YouTube Music and YouTube ("AI slop") is a growing p
 python3 build/build.py
 ```
 
-This will:
+Package the committed fixture without contacting blocklist hosts:
+
+```bash
+python3 build/build.py --no-download
+```
+
+The default command will:
 
 1. Fetch all blocklists via `src/blocklist_aggregator.py`.
-2. Generate `src/data/blocklist.json`.
-3. Package Firefox and Chrome extensions into `output/`.
+2. Generate `src/data/blocklist.json`. A total fetch failure leaves the existing file unchanged and exits non-zero.
+3. Copy that file into the Firefox and Chrome extension roots and package them into `output/`.
 4. Package the userscript into `output/`.
+
+CI packaging uses `--no-download`. The weekly refresh workflow is what fetches sources.
 
 ### Release
 
