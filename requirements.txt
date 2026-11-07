@@ -1,3 +1,6 @@
 # YTM-DeSlop builds on Python 3 standard library only.
 # No external pip packages are required.
-python-version >= 3.9
+# Python >= 3.9 is the interpreter floor. Workflows select 3.11 with
+# actions/setup-python. Do not encode that floor as a pip requirement:
+# a line like `python-version>=3.9` names the PyPI distribution
+# python-version (published as 0.0.2) and fails the install.

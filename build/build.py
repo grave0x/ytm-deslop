@@ -11,7 +11,11 @@ Automated build pipeline that:
   5. Copies userscript.js / userscript.json for release
 
 Usage:
-    python3 build/build.py [--no-download] [--release]
+    python3 build/build.py [--no-download]
+
+`--no-download` packages the committed src/data/blocklist.json and does not
+contact blocklist hosts. The default still fetches sources. `--release` is
+accepted and ignored; this script does not publish a GitHub release.
 """
 
 import os
@@ -47,7 +51,9 @@ def run_aggregator():
 def copy_shared_resources():
     """Copy shared assets into both extension builds."""
     step("Copying shared resources")
-    # Copy userscript into extension roots so it can be used if needed
+    blocklist = SRC_DIR / "data" / "blocklist.json"
+    # Copy userscript into extension roots so it can be used if needed.
+    # blocklist.json is what the background script loads via chrome.runtime.getURL.
     for dest in (FIREFOX_DIR, CHROME_DIR):
         dest.mkdir(parents=True, exist_ok=True)
         userscript = SRC_DIR / "userscript.js"
@@ -56,6 +62,8 @@ def copy_shared_resources():
         userscript_json = SRC_DIR / "userscript.json"
         if userscript_json.exists():
             shutil.copy2(userscript_json, dest / "userscript.json")
+        if blocklist.is_file():
+            shutil.copy2(blocklist, dest / "blocklist.json")
 
 
 def package_extension(src_dir: Path, output_name: str):
@@ -98,6 +106,8 @@ def verify_build():
         CHROME_DIR / "popup.js",
         CHROME_DIR / "options.html",
         CHROME_DIR / "options.js",
+        FIREFOX_DIR / "blocklist.json",
+        CHROME_DIR / "blocklist.json",
     ]
 
     missing = [str(f) for f in required_files if not f.exists()]
@@ -111,11 +121,16 @@ def verify_build():
     return True
 
 
-def main():
+def main(argv: list[str] | None = None) -> None:
+    args = list(sys.argv[1:] if argv is None else argv)
+    no_download = "--no-download" in args
     print("YTM-DeSlop Build Pipeline v1.0.0")
     print(f"Root: {ROOT}")
 
-    run_aggregator()
+    if no_download:
+        step("Using committed blocklist (--no-download)")
+    else:
+        run_aggregator()
 
     copy_shared_resources()
 
@@ -145,4 +160,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

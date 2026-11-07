@@ -21,6 +21,7 @@ import datetime
 import json
 import os
 import re
+import sys
 import urllib.request
 import urllib.error
 from dataclasses import dataclass, asdict
@@ -301,13 +302,22 @@ def dedupe(entries: Iterable[BlockEntry]) -> list[BlockEntry]:
 # Main
 # ---------------------------------------------------------------------------
 
-def aggregate() -> list[BlockEntry]:
+def aggregate() -> tuple[list[BlockEntry], int]:
+    """Return deduped entries and how many sources returned a response body.
+
+    A source that fails to fetch is skipped. Callers must not treat a fetch
+    count of zero as an empty blocklist: that is a transport failure, and
+    writing it would replace a good fixture with nothing.
+    """
     all_entries: list[BlockEntry] = []
+    fetched = 0
     for name, cfg in SOURCES.items():
         print(f"[*] Aggregating {name} ({cfg['type']}) ...")
         text = fetch_text(cfg["url"])
         if not text:
+            print(f"    -> no response from {name}")
             continue
+        fetched += 1
         parser = PARSERS[cfg["type"]]
         if cfg["type"] == "json_array":
             data = fetch_json(cfg["url"])
@@ -319,7 +329,8 @@ def aggregate() -> list[BlockEntry]:
 
     deduped = dedupe(all_entries)
     print(f"[*] Total raw: {len(all_entries)}, deduplicated: {len(deduped)}")
-    return deduped
+    print(f"[*] Sources fetched: {fetched}/{len(SOURCES)}")
+    return deduped, fetched
 
 
 def write_output(entries: list[BlockEntry]) -> None:
@@ -336,7 +347,12 @@ def write_output(entries: list[BlockEntry]) -> None:
 
 
 def main() -> None:
-    entries = aggregate()
+    entries, fetched = aggregate()
+    if fetched == 0:
+        print(
+            "[!] All blocklist sources failed; existing blocklist.json was left unchanged."
+        )
+        sys.exit(1)
     write_output(entries)
 
 

@@ -59,7 +59,7 @@ jobs:
 
       - name: Build extensions
         run: |
-          python3 build/build.py
+          python3 build/build.py --no-download
 
       - name: Generate checksums
         run: |
@@ -115,6 +115,10 @@ jobs:
           mkdir -p build/firefox
           mkdir -p build/chrome
 
+      - name: Regression tests
+        run: |
+          python3 -m unittest discover -s tests -v
+
       - name: Test build script
         run: |
-          python3 build/build.py
+          python3 build/build.py --no-download

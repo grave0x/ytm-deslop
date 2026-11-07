@@ -25,75 +25,69 @@ async function getBlocklist() {
 /**
  * Check if a channel handle/ID matches a blocklist entry
  */
+function topicOrVevoArtist(canonical) {
+    return canonical.replace(/ - topic( vevo)?$/, "").replace(/ vevo$/, "");
+}
+
 function isChannelBlocked(channelIdOrHandle, blocklistEntries) {
-    if (!channelIdOrHandle) return false;
+    if (!channelIdOrHandle || !blocklistEntries) return false;
 
     const canonical = canonicalize(channelIdOrHandle);
-
-    if (!blocklistEntries) return false;
+    if (!canonical) return false;
+    const asArtist = topicOrVevoArtist(canonical);
 
     for (const entry of blocklistEntries) {
-        if (entry.kind !== "channel") continue;
-
         const entryValue = canonicalize(entry.value);
-
-        // Exact match on handle
-        if (canonical === entryValue) return true;
-
-        // Handle base match (e.g., @name-1234 vs @name)
-        if (canonical.startsWith("@") && entryValue.startsWith("@")) {
-            const baseCanonical = canonical.slice(1);
-            const baseEntry = entryValue.slice(1);
-            if (baseCanonical === baseEntry) return true;
-        }
-
-        // UC ID exact match
-        if (CHANNEL_ID_RE.test(canonical) && CHANNEL_ID_RE.test(entryValue)) {
-            if (canonical === entryValue) return true;
+        if (!entryValue) continue;
+        if (entry.kind === "channel" && canonical === entryValue) return true;
+        // YouTube Music renders artist channels as "Name - Topic" / "Name VEVO".
+        if (entry.kind === "artist" && asArtist !== canonical && asArtist === entryValue) {
+            return true;
         }
     }
     return false;
 }
 
 /**
- * Check if artist name matches a blocklist entry
+ * Exact artist match, plus Topic/VEVO channel-name variants.
+ * Substring matching is rejected: an entry "ai" must not block "rain" or "wait".
  */
 function isArtistBlocked(artistName, blocklistEntries) {
     if (!artistName || !blocklistEntries) return false;
 
     const canonical = canonicalize(artistName);
+    if (!canonical) return false;
+    const asArtist = topicOrVevoArtist(canonical);
 
     for (const entry of blocklistEntries) {
-        if (entry.kind !== "artist") continue;
-
         const entryValue = canonicalize(entry.value);
-
-        // Contains match
-        if (canonical.includes(entryValue) || entryValue.includes(canonical)) {
+        if (!entryValue) continue;
+        if (entry.kind === "artist" && (canonical === entryValue || (asArtist !== canonical && asArtist === entryValue))) {
             return true;
         }
-
-        // Exact match
-        if (canonical === entryValue) return true;
+        if (entry.kind === "channel" && canonical.startsWith("@") && canonical === entryValue) {
+            return true;
+        }
     }
     return false;
 }
 
 /**
- * Check if title contains a blocked keyword
+ * Title keyword match. Keywords shorter than 4 characters are ignored so
+ * fragments such as "ai" do not match ordinary words.
  */
 function isTitleBlocked(title, blocklistEntries) {
     if (!title || !blocklistEntries) return false;
 
     const canonicalTitle = canonicalize(title);
+    if (!canonicalTitle) return false;
 
     for (const entry of blocklistEntries) {
         if (entry.kind !== "keyword") continue;
 
         const keyword = canonicalize(entry.value);
-        if (keyword && canonicalTitle.includes(keyword)) {
-            return true;
-        }
+        if (keyword.length < 4) continue;
+        if (canonicalTitle.includes(keyword)) return true;
     }
     return false;
 }
@@ -105,11 +99,6 @@ function canonicalize(value) {
     if (!value) return "";
     return value.trim().toLowerCase();
 }
-
-/**
- * YouTube channel ID regex: UC + 22 alphanumeric chars
- */
-const CHANNEL_ID_RE = /^UC[A-Za-z0-9_-]{22}$/;
 
 /**
  * Apply blocking visual indicator to an element
